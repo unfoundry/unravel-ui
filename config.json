@@ -1,11 +1,11 @@
 {
   "appName": "Unravel",
   "appSubtitle": "Tabular Data Ingestion & Normalizer",
-  "appRoot": "/app",
+  "appRoot": "/unravel-ui",
   "appLogoIcon": "bi-layers-half",
   "appLogoImage": "assets/icons/icon-solo.svg",
-  "companyName": "Enterprise Global Operations",
-  "supportEmail": "operations@enterprise.org",
+  "companyName": "Unfoundry",
+  "supportEmail": "mail@unfoundry.co.uk",
   "privacyPolicyUrl": "docs/privacy-policy.md",
   "documentationUrl": "docs/README.md",
 
