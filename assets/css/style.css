@@ -1,0 +1,782 @@
+/* ==========================================================================
+   Unravel - Apple Glassmorphism & Enterprise Design System Stylesheet
+   ========================================================================== */
+
+:root {
+  --unravel-primary: #158cba;
+  --unravel-primary-dark: #117095;
+  --unravel-primary-light: #23a8dc;
+  --unravel-teal: #75caeb;
+  --unravel-success: #28b62c;
+  --unravel-warning: #ff851b;
+  --unravel-danger: #ff4136;
+  --unravel-purple: #7c2855;
+  --unravel-surface: #f6f6f6;
+
+  /* Design token aliases */
+  --nhs-blue: var(--unravel-primary);
+  --nhs-dark-blue: var(--unravel-primary-dark);
+  --nhs-bright-blue: var(--unravel-primary-light);
+  --nhs-light-green: var(--unravel-teal);
+  --nhs-green: var(--unravel-success);
+  --nhs-warm-yellow: var(--unravel-warning);
+  --nhs-red: var(--unravel-danger);
+  --nhs-dark-pink: var(--unravel-purple);
+  --nhs-pale-grey: var(--unravel-surface);
+  
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-bg-hover: rgba(255, 255, 255, 0.85);
+  --glass-card-bg: rgba(255, 255, 255, 0.75);
+  --glass-border: rgba(255, 255, 255, 0.45);
+  --glass-border-subtle: rgba(0, 0, 0, 0.08);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 48, 135, 0.08);
+  --glass-shadow-lg: 0 16px 40px 0 rgba(0, 48, 135, 0.12);
+  --glass-backdrop-blur: blur(16px);
+  --glass-radius: 14px;
+}
+
+/* Background Atmosphere */
+html, body {
+  height: 100%;
+  overflow: hidden; /* App viewport never scrolls */
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: radial-gradient(circle at 10% 20%, rgba(0, 94, 184, 0.12) 0%, rgba(240, 244, 248, 0.95) 70%),
+              radial-gradient(circle at 90% 80%, rgba(0, 164, 153, 0.1) 0%, rgba(240, 244, 248, 1) 80%);
+  background-attachment: fixed;
+  color: #1e293b;
+  display: flex;
+  flex-direction: column;
+}
+
+/* App Main Content Area - Step container scrolls independently if needed */
+.app-main-content {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 1.5rem;
+}
+
+/* Glassmorphism Containers */
+.glass-panel {
+  background: var(--glass-card-bg);
+  backdrop-filter: var(--glass-backdrop-blur);
+  -webkit-backdrop-filter: var(--glass-backdrop-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  border-radius: var(--glass-radius);
+  transition: all 0.25s ease;
+}
+
+.glass-panel:hover {
+  border-color: rgba(0, 94, 184, 0.25);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  transition: 0.5s ease;
+}
+
+/* Top Ribbon Header */
+.ribbon-header {
+  position: sticky;
+  top: 0;
+  z-index: 1020;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 2px 10px rgba(0, 48, 135, 0.04);
+}
+
+.ribbon-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1.25rem;
+}
+
+.ribbon-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--nhs-dark-blue);
+  text-decoration: none;
+}
+
+.ribbon-brand-icon,
+.ribbon-badge-nhs {
+  background: linear-gradient(135deg, var(--unravel-primary), var(--unravel-teal));
+  color: #fff;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 7px;
+  font-size: 0.95rem;
+  box-shadow: 0 2px 6px rgba(0, 94, 184, 0.25);
+}
+
+/* Menu Dropdowns */
+.nav-ribbon .nav-link,
+.nav-ribbon .nav-link:link,
+.nav-ribbon .nav-link:visited {
+  color: #334155;
+  font-size: 0.88rem;
+  font-weight: 500;
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  text-decoration: none !important;
+  transition: all 0.15s ease;
+}
+
+.nav-ribbon .nav-link:hover,
+.nav-ribbon .nav-link:focus,
+.nav-ribbon .show > .nav-link {
+  background: rgba(0, 94, 184, 0.08);
+  color: var(--nhs-blue);
+  text-decoration: none !important;
+}
+
+.dropdown-item-glass,
+.dropdown-item-glass:link,
+.dropdown-item-glass:visited {
+  border-radius: 6px;
+  font-size: 0.86rem;
+  padding: 0.45rem 0.85rem;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-decoration: none !important;
+}
+
+.dropdown-item-glass:hover {
+  background-color: rgba(0, 94, 184, 0.08);
+  color: var(--nhs-blue);
+}
+
+.dropdown-item-glass i {
+  margin-right: 0.5rem;
+}
+
+.dropdown-item-glass kbd {
+  font-size: 0.7rem;
+  background-color: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+/* Dirty State Indicator Badge */
+.dirty-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.75rem;
+  border-radius: 20px;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+.dirty-indicator.clean {
+  background-color: #e6f4ea;
+  color: #137333;
+  border: 1px solid #ceead6;
+}
+.dirty-indicator.dirty {
+  background-color: #fce8e6;
+  color: #c5221f;
+  border: 1px solid #fad2cf;
+}
+
+/* Quick Action Toolbar */
+.quick-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(241, 245, 249, 0.7);
+  padding: 0.25rem 0.5rem;
+  border-radius: 8px;
+  border: 1px solid rgba(203, 213, 225, 0.5);
+}
+
+.quick-btn {
+  background: transparent;
+  border: none;
+  font-size: 0.85rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  color: #475569;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all 0.15s ease;
+}
+
+.quick-btn:hover {
+  background: #ffffff;
+  color: var(--nhs-blue);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.quick-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Wizard Stepper Bar */
+.stepper-nav {
+  display: flex;
+  overflow-x: auto;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  scrollbar-width: thin;
+}
+
+.step-node {
+  flex: 1;
+  min-width: 140px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  border-radius: 10px;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.step-node:hover {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(0, 94, 184, 0.3);
+}
+
+.step-node.active {
+  background: rgba(255, 255, 255, 0.98);
+  border-color: var(--nhs-blue);
+  box-shadow: 0 4px 12px rgba(0, 94, 184, 0.12);
+}
+
+.step-node.active.ready {
+  border: 2px solid #28a745 !important;
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.22), 0 4px 12px rgba(40, 167, 69, 0.18) !important;
+}
+
+.step-node.active.ready .step-icon-circle {
+  background: #28a745 !important;
+  color: #fff !important;
+}
+
+.step-node.completed {
+  border-color: rgba(0, 164, 153, 0.4);
+}
+
+.step-icon-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: #e2e8f0;
+  color: #64748b;
+  flex-shrink: 0;
+}
+
+.step-node.active .step-icon-circle {
+  background: var(--nhs-blue);
+  color: #fff;
+}
+
+.step-node.completed .step-icon-circle {
+  background: var(--nhs-light-green);
+  color: #fff;
+}
+
+.step-text-title {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #1e293b;
+  line-height: 1.2;
+}
+
+.step-text-sub {
+  font-size: 0.68rem;
+  color: #64748b;
+  display: block;
+}
+
+/* Wizard Panels */
+.step-pane {
+  display: none;
+  animation: fadeIn 0.25s ease-in-out;
+}
+
+.step-pane.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* File Drop Zone */
+.dropzone-box {
+  border: 2px dashed rgba(0, 94, 184, 0.35);
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 14px;
+  padding: 3rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dropzone-box:hover,
+.dropzone-box.dragover {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: var(--nhs-blue);
+  transform: translateY(-2px);
+}
+
+/* Live Excel-like Editable Grid */
+.grid-container {
+  max-height: 520px;
+  overflow: auto;
+  border-radius: 8px;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  background: #ffffff;
+  position: relative;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.excel-grid {
+  width: 100%;
+  min-width: 700px;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.85rem;
+}
+
+.excel-grid thead th {
+  position: sticky;
+  top: 0;
+  background: #f8fafc;
+  border-bottom: 2px solid #cbd5e1;
+  border-right: 1px solid #e2e8f0;
+  padding: 0.6rem 0.8rem;
+  font-weight: 600;
+  color: #334155;
+  text-align: left;
+  z-index: 5;
+  white-space: nowrap;
+  min-width: 140px;
+}
+
+.excel-grid thead th.row-num-cell,
+.excel-grid thead th:first-child {
+  min-width: 44px;
+  width: 44px;
+}
+
+.excel-grid tbody td {
+  border-bottom: 1px solid #f1f5f9;
+  border-right: 1px solid #f1f5f9;
+  padding: 0.5rem 0.75rem;
+  color: #1e293b;
+  white-space: nowrap;
+  outline: none;
+  position: relative;
+  min-width: 140px;
+}
+
+.excel-grid tbody tr:hover td {
+  background-color: rgba(241, 245, 249, 0.6);
+}
+
+.excel-grid td.row-num-cell,
+.excel-grid td:first-child {
+  background-color: #f8fafc;
+  color: #94a3b8;
+  font-weight: 500;
+  text-align: center;
+  width: 44px;
+  min-width: 44px;
+  user-select: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.excel-grid td.row-num-cell:hover,
+.excel-grid td:first-child:hover {
+  background-color: #e2e8f0;
+  color: #0f172a;
+}
+
+.excel-grid tr.row-selected td.row-num-cell,
+.excel-grid tr.row-selected td:first-child {
+  background-color: #005eb8 !important;
+  color: #ffffff !important;
+  font-weight: 700;
+}
+
+/* Error cell styling - Soft red accent as requested in doubts-thoughts.md */
+.excel-grid tr.row-has-error td {
+  background-color: rgba(254, 242, 242, 0.6);
+}
+
+.excel-grid td.cell-error {
+  background-color: #fee2e2 !important;
+  color: #991b1b !important;
+  font-weight: 600;
+  position: relative;
+  box-shadow: inset 0 0 0 1.5px #ef4444;
+}
+
+.excel-grid td.cell-error::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 6px 6px 0;
+  border-color: transparent #dc2626 transparent transparent;
+}
+
+.excel-grid td.cell-edited {
+  background-color: #ecfdf5 !important;
+  color: #065f46;
+}
+
+.excel-grid td:focus {
+  background-color: #eff6ff !important;
+  box-shadow: inset 0 0 0 2px var(--nhs-blue) !important;
+}
+
+/* Badge tags */
+.validation-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+.badge-pass {
+  background: rgba(0, 127, 59, 0.12);
+  color: var(--nhs-green);
+}
+.badge-fail {
+  background: rgba(213, 40, 27, 0.12);
+  color: var(--nhs-red);
+}
+
+/* Apple Buttons */
+.btn-apple-primary {
+  background-color: var(--nhs-blue);
+  color: #ffffff;
+  border: none;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 0.5rem 1.1rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 94, 184, 0.25);
+}
+
+.btn-apple-primary:hover {
+  background-color: var(--nhs-dark-blue);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 94, 184, 0.35);
+}
+
+.btn-apple-secondary {
+  background-color: rgba(255, 255, 255, 0.85);
+  color: #334155;
+  border: 1px solid #cbd5e1;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  transition: all 0.2s ease;
+}
+
+.btn-apple-secondary:hover {
+  background-color: #f8fafc;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+/* Footer status bar */
+.excel-statusbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.35rem 1.25rem;
+  font-size: 0.78rem;
+  color: #64748b;
+  background: rgba(255, 255, 255, 0.9);
+  border-top: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+/* Step Skipped / Disabled State */
+.step-node.skipped {
+  opacity: 0.5;
+  background: rgba(241, 245, 249, 0.4);
+  cursor: not-allowed;
+}
+
+.step-node.skipped .step-icon-circle {
+  background: #cbd5e1;
+  color: #94a3b8;
+}
+
+/* Inactive / Irrelevant Step Overlay */
+.step-pane-overlay {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 2px dashed rgba(0, 94, 184, 0.3);
+  border-radius: var(--glass-radius);
+  padding: 3.5rem 2rem;
+  text-align: center;
+}
+
+/* Row Selection Highlighting */
+.excel-grid tr.row-selected td {
+  background-color: rgba(0, 94, 184, 0.12) !important;
+}
+
+.excel-grid td.cell-error.ignorable {
+  background-color: #fef3c7 !important;
+  color: #92400e !important;
+  box-shadow: inset 0 0 0 1.5px #f59e0b;
+}
+
+.excel-grid td.cell-error.ignorable::after {
+  border-color: transparent #f59e0b transparent transparent;
+}
+
+/* Collapsible Rules Sidebar */
+/* Collapsible Rules Browser Sidebar (Top-to-bottom right drawer with zero gaps) */
+.rules-sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  height: 100vh;
+  width: 380px;
+  max-width: 95vw;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border-left: 1px solid rgba(203, 213, 225, 0.9);
+  box-shadow: -10px 0 40px rgba(0, 48, 135, 0.16);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  z-index: 2000; /* Stays above top ribbon */
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.rules-sidebar.collapsed {
+  transform: translateX(105%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.rules-sidebar-header {
+  padding: 1rem 1.25rem;
+  background: rgba(248, 250, 252, 0.85);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rules-sidebar-body {
+  padding: 1.25rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.rule-metric-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  margin-bottom: 0.85rem;
+  box-shadow: 0 2px 8px rgba(0, 48, 135, 0.03);
+  transition: all 0.2s ease;
+}
+
+.rule-metric-card:hover {
+  border-color: rgba(0, 94, 184, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 48, 135, 0.08);
+}
+
+/* Fallback default value badge & styling */
+.excel-grid td.cell-fallback {
+  background-color: #fef9c3 !important;
+  color: #854d0e !important;
+  font-style: italic;
+  position: relative;
+  box-shadow: inset 0 0 0 1px #eab308;
+}
+
+.excel-grid td.cell-fallback::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 5px 5px 0;
+  border-color: transparent #ca8a04 transparent transparent;
+}
+
+/* Ingestion Summary Cards */
+.summary-stat-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 12px;
+  padding: 1.25rem;
+  text-align: center;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.summary-stat-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+}
+
+.summary-stat-card.stat-total::before { background: #64748b; }
+.summary-stat-card.stat-valid::before { background: var(--nhs-green); }
+.summary-stat-card.stat-ignored::before { background: var(--nhs-warm-yellow); }
+.summary-stat-card.stat-dropped::before { background: var(--nhs-red); }
+
+.summary-stat-number {
+  font-size: 2.15rem;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-top: 0.35rem;
+}
+
+.dropdown-menu{
+    width: 15vw;
+    justify-content: space-between;
+
+}
+
+.cursor-pointer{
+  cursor: pointer;
+}
+
+/* Translation Mapping Row States & Colorblind Aids */
+.mapping-card {
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mapping-card-mapped {
+  background-color: #f6fcf8 !important;
+  border-color: #c6ebd2 !important;
+}
+
+.mapping-card-unmapped-optional {
+  background-color: #fffdf0 !important;
+  border-color: #fef08a !important;
+}
+
+.mapping-card-unmapped-required {
+  background-color: #fff5f5 !important;
+  border-color: #feb2b2 !important;
+  box-shadow: 0 1px 4px rgba(220, 53, 69, 0.08);
+}
+
+/* Step 4 Worksheet Badges */
+.sheet-badge {
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  font-size: 0.8rem;
+  border-radius: 50rem;
+  padding: 0.35rem 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  user-select: none;
+}
+
+.sheet-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sheet-badge.sheet-badge-active {
+  background-color: #005eb8 !important;
+  color: #ffffff !important;
+  border-color: #005eb8 !important;
+  box-shadow: 0 2px 6px rgba(0, 94, 184, 0.25);
+}
+
+.sheet-badge.sheet-badge-matched:not(.sheet-badge-active) {
+  background-color: #dcfce7 !important;
+  color: #166534 !important;
+  border-color: #86efac !important;
+}
+
+.sheet-badge.sheet-badge-unmatched {
+  background-color: #ffffff !important;
+  color: #475569 !important;
+  border-color: #cbd5e1 !important;
+}
+
+.sheet-badge.sheet-badge-unmatched:hover {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+  border-color: #94a3b8 !important;
+}
+
+
+.mapping-status-icon-col {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  flex-shrink: 0;
+}
+  
+}

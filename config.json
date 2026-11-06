@@ -1,0 +1,47 @@
+{
+  "appName": "Unravel",
+  "appSubtitle": "Tabular Data Ingestion & Normalizer",
+  "appRoot": "/app",
+  "appLogoIcon": "bi-layers-half",
+  "appLogoImage": "assets/icons/icon-solo.svg",
+  "companyName": "Enterprise Global Operations",
+  "supportEmail": "operations@enterprise.org",
+  "privacyPolicyUrl": "docs/privacy-policy.md",
+  "documentationUrl": "docs/README.md",
+
+  "endpoints": {
+    "unravelServiceUrl": "http://127.0.0.1:8001",
+    "userInfoUrl": "assets/sample-data/user-info.json",
+    "defaultApiUrl": "https://api.enterprise.org/v1/ingest/clients",
+    "defaultAuthToken": ""
+  },
+
+  "theme": {
+    "name": "lumen",
+    "primary": "#158cba",
+    "primaryDark": "#117095",
+    "primaryLight": "#23a8dc",
+    "accent": "#158cba",
+    "success": "#28b62c",
+    "warning": "#ff851b",
+    "danger": "#ff4136",
+    "surface": "#f6f6f6",
+    "border": "#dddddd"
+  },
+
+  "features": {
+    "enableSecurityVault": false,
+    "enableSamples": false,
+    "enableUnravelService": false,
+    "enableDecryptionService": true,
+    "enableFileBroker": true,
+    "enableTelemetry": true,
+    "enableHybridEncryption": false,
+    "enableDevStudio": true,
+    "autoAdvanceFurthestStep": true,
+    "defaultSheetDateFormat": "YYYY-MM-DD",
+    "maxPreviewRows": 5,
+    "allowUnsavedExitWarning": true
+  }
+}
+

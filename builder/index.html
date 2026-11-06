@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" id="app-meta-description" content="Developer Config Studio - Tabular Data Ingestion & Normalizer">
+  <link rel="icon" id="app-favicon" href="../assets/icons/icon.svg" type="image/svg+xml">
+  <link rel="alternate icon" href="../assets/icons/icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+  <link rel="manifest" href="../manifest.webmanifest">
+  <meta name="theme-color" content="#005eb8">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Unravel Studio">
+  <title>Developer Config Studio - Unravel</title>
+
+  <!-- Local Offline CSS Assets -->
+  <link rel="stylesheet" href="../assets/vendor/bootstrap/bootstrap.min.css">
+  <link rel="stylesheet" href="../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="../assets/vendor/sweetalert2/sweetalert2.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+
+  <style>
+    /* Developer Studio Custom Layout Overrides */
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+    .builder-scroll-pane {
+      height: calc(100vh - 65px);
+      overflow-y: auto;
+      padding: 1.25rem;
+    }
+    .json-preview-card {
+      height: calc(100vh - 85px);
+      display: flex;
+      flex-direction: column;
+    }
+    .json-code-box {
+      flex: 1;
+      overflow-y: auto;
+      background: #0f172a;
+      color: #38bdf8;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.8rem;
+      border-radius: 8px;
+      padding: 1rem;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .template-card {
+      border: 1px solid rgba(0, 94, 184, 0.15);
+      border-radius: 10px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .template-card:hover {
+      border-color: var(--unravel-primary);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 94, 184, 0.12);
+    }
+    .drop-zone-dashed {
+      border: 2px dashed rgba(0, 94, 184, 0.35);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.6);
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .drop-zone-dashed:hover {
+      border-color: var(--unravel-primary);
+      background: rgba(0, 94, 184, 0.04);
+    }
+    .shadow-xs {
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+  </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+  <!-- =========================================================================
+       1. EXCEL-LIKE TOP RIBBON BANNER (Identical Theme to Runner)
+       ========================================================================= -->
+  <header class="ribbon-header">
+    <div class="ribbon-bar">
+      <!-- Brand & Title -->
+      <div class="d-flex align-items-center gap-3">
+        <a href="../index.html" class="ribbon-brand text-decoration-none">
+          <span class="ribbon-brand-icon" id="app-brand-icon"><i class="bi bi-layers-half"></i></span>
+          <span id="app-brand-name">Unravel</span>
+          <span id="app-brand-subtitle" class="small text-muted fw-normal d-none ms-1 border-start ps-2" style="font-size:0.75rem;">Tabular Data Ingestion & Normalizer</span>
+        </a>
+        <div class="vr mx-1 text-secondary opacity-50 d-none d-md-block"></div>
+        <div class="d-none d-md-flex align-items-center gap-2">
+          <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1">
+            <i class="bi bi-tools me-1"></i> Developer Studio
+          </span>
+          <span class="fw-semibold text-secondary small">Project Builder</span>
+        </div>
+      </div>
+
+      <!-- Quick Action Ribbon (Consistent quick-toolbar & quick-btn) -->
+      <div class="d-flex align-items-center gap-2">
+        <div class="quick-toolbar d-none d-lg-flex">
+          <button id="btn-builder-undo" class="quick-btn" title="Undo (Ctrl+Z)" disabled onclick="builder.undo()">
+            <i class="bi bi-arrow-counterclockwise"></i> Undo
+          </button>
+          <button id="btn-builder-redo" class="quick-btn" title="Redo (Ctrl+Y)" disabled onclick="builder.redo()">
+            <i class="bi bi-arrow-clockwise"></i> Redo
+          </button>
+          <div class="vr my-1 text-secondary opacity-50"></div>
+          <button id="btn-toggle-json-pane" class="quick-btn" title="Toggle Live JSON Preview" onclick="builder.toggleJsonPreview()">
+            <i class="bi bi-layout-sidebar-inset-reverse text-primary"></i> <span id="btn-toggle-json-label">Hide JSON</span>
+          </button>
+          <button id="btn-copy-json" class="quick-btn" title="Copy schema to clipboard">
+            <i class="bi bi-clipboard text-primary"></i> Copy JSON
+          </button>
+          <button id="btn-download-json" class="quick-btn text-success" title="Download config file">
+            <i class="bi bi-download"></i> Download .json
+          </button>
+          <button id="btn-test-in-runner" class="quick-btn text-primary" title="Test drive in Unravel">
+            <i class="bi bi-play-circle-fill"></i> Test in Runner
+          </button>
+          <div class="vr my-1 text-secondary opacity-50"></div>
+          <a href="../index.html" class="quick-btn" title="Return to Unravel Runner">
+            <i class="bi bi-arrow-left"></i> Runner
+          </a>
+        </div>
+
+        <!-- Mobile Action Dropdown for Developer Studio -->
+        <div class="dropdown d-lg-none">
+          <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" title="Studio Actions">
+            <i class="bi bi-three-dots-vertical"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-glass">
+            <li><a class="dropdown-item-glass" href="#" onclick="builder.undo()"><i class="bi bi-arrow-counterclockwise"></i> Undo (Ctrl+Z)</a></li>
+            <li><a class="dropdown-item-glass" href="#" onclick="builder.redo()"><i class="bi bi-arrow-clockwise"></i> Redo (Ctrl+Y)</a></li>
+            <li><a class="dropdown-item-glass" href="#" onclick="builder.toggleJsonPreview()"><i class="bi bi-layout-sidebar-inset-reverse text-primary"></i> Toggle JSON Preview</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <label class="dropdown-item-glass cursor-pointer mb-0">
+                <i class="bi bi-folder2-open text-primary"></i> Import JSON...
+                <input type="file" id="builder-import-json-mobile" accept=".json" class="d-none" onchange="if(this.files[0]) builder.importSchemaFromFile(this.files[0])">
+              </label>
+            </li>
+            <li><a class="dropdown-item-glass" href="#" onclick="builder.copyJsonToClipboard()"><i class="bi bi-clipboard text-primary"></i> Copy JSON</a></li>
+            <li><a class="dropdown-item-glass" href="#" onclick="builder.downloadSchema()"><i class="bi bi-download text-success"></i> Download .json</a></li>
+            <li><a class="dropdown-item-glass" href="#" onclick="builder.launchInRunner()"><i class="bi bi-play-circle-fill text-primary"></i> Test in Runner</a></li>
+            <li><a class="dropdown-item-glass" href="../../docs/developer-guide.md" target="_blank"><i class="bi bi-book text-primary"></i> Developer Docs</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item-glass" href="../index.html"><i class="bi bi-arrow-left"></i> Return to Runner</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ribbon Menu Bar (File, Edit, View, Help) matching Runner UI -->
+    <div class="px-3 pb-1 border-top border-light-subtle d-flex align-items-center gap-2 nav-ribbon">
+      <div class="dropdown">
+        <a class="nav-link dropdown-toggle py-1" href="#" role="button" data-bs-toggle="dropdown">File</a>
+        <ul class="dropdown-menu dropdown-menu-glass">
+          <li><a class="dropdown-item-glass" href="#" onclick="builder.newSchema()"><i class="bi bi-file-earmark-plus text-primary"></i> New Project Schema</a></li>
+          <li>
+            <label class="dropdown-item-glass cursor-pointer mb-0">
+              <i class="bi bi-folder2-open text-primary"></i> Open / Import JSON...
+              <input type="file" id="builder-import-json-input" accept=".json" class="d-none" onchange="if(this.files[0]) builder.importSchemaFromFile(this.files[0])">
+            </label>
+          </li>
+          <li><a class="dropdown-item-glass text-success" href="#" onclick="builder.downloadSchema()"><span><i class="bi bi-download text-success"></i> Download Schema .json</span><kbd>Ctrl+S</kbd></a></li>
+          <li><a class="dropdown-item-glass" href="#" onclick="builder.copyJsonToClipboard()"><i class="bi bi-clipboard text-primary"></i> Copy JSON to Clipboard</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item-glass" href="#" onclick="builder.launchInRunner()"><i class="bi bi-play-circle-fill text-primary"></i> Test in Runner</a></li>
+          <li><a class="dropdown-item-glass" href="../index.html"><i class="bi bi-arrow-left"></i> Return to Runner</a></li>
+        </ul>
+      </div>
+
+      <div class="dropdown">
+        <a class="nav-link dropdown-toggle py-1" href="#" role="button" data-bs-toggle="dropdown">Edit</a>
+        <ul class="dropdown-menu dropdown-menu-glass">
+          <li><a class="dropdown-item-glass" id="menu-builder-undo" href="#" onclick="builder.undo()"><span><i class="bi bi-arrow-counterclockwise"></i> Undo</span><kbd>Ctrl+Z</kbd></a></li>
+          <li><a class="dropdown-item-glass" id="menu-builder-redo" href="#" onclick="builder.redo()"><span><i class="bi bi-arrow-clockwise"></i> Redo</span><kbd>Ctrl+Y</kbd></a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item-glass" href="#" onclick="builder.addNewTargetColumn()"><i class="bi bi-plus-circle text-primary"></i> Add Target Column</a></li>
+          <li><a class="dropdown-item-glass" href="#" onclick="builder.addNewCalculatedColumn()"><i class="bi bi-calculator text-primary"></i> Add Calculated Column</a></li>
+          <li><a class="dropdown-item-glass" href="#" onclick="builder.addNewRowFilter()"><i class="bi bi-funnel text-primary"></i> Add Ingestion Row Filter</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item-glass text-danger" href="#" onclick="builder.resetToCleanState()"><i class="bi bi-arrow-counterclockwise text-danger"></i> Reset to Default</a></li>
+        </ul>
+      </div>
+
+      <div class="dropdown">
+        <a class="nav-link dropdown-toggle py-1" href="#" role="button" data-bs-toggle="dropdown">View</a>
+        <ul class="dropdown-menu dropdown-menu-glass">
+          <li><a class="dropdown-item-glass" href="#" onclick="builder.toggleJsonPreview()"><i class="bi bi-layout-sidebar-inset-reverse text-primary"></i> <span id="menu-toggle-json-text">Hide JSON Live Preview</span></a></li>
+        </ul>
+      </div>
+
+      <div class="dropdown">
+        <a class="nav-link dropdown-toggle py-1" href="#" role="button" data-bs-toggle="dropdown">Help</a>
+        <ul class="dropdown-menu dropdown-menu-glass">
+          <li><a class="dropdown-item-glass" href="../../docs/developer-guide.md" target="_blank"><i class="bi bi-book text-primary"></i> Developer Guide</a></li>
+          <li><a class="dropdown-item-glass" href="../index.html"><i class="bi bi-layers-half text-primary"></i> Unravel Runner</a></li>
+        </ul>
+      </div>
+    </div>
+    </div>
+  </header>
+
+  <!-- =========================================================================
+       2. MAIN STUDIO SPLIT-PANE WORKSPACE
+       ========================================================================= -->
+  <div class="container-fluid p-0 flex-grow-1 overflow-hidden">
+    <div class="row g-0 h-100">
+
+      <!-- LEFT COLUMN: BUILDER WORKSPACE (Scrollable) -->
+      <div id="builder-left-column" class="col-lg-7 col-xl-8 builder-scroll-pane border-end">
+
+        <!-- 1-Click Starter Scaffolds (Governed by starter-templates.json) -->
+        <div class="glass-panel p-3 mb-3" id="builder-starter-templates-panel">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="d-flex align-items-center gap-2">
+              <h6 class="fw-bold mb-0 text-dark small"><i class="bi bi-lightning-charge text-warning-emphasis"></i> Starter Templates</h6>
+              <span class="badge bg-light text-muted border" id="templates-count-badge">Loading...</span>
+            </div>
+            <div class="d-flex gap-2">
+              <button id="btn-save-as-template" class="btn btn-sm btn-outline-success py-0 px-2" style="font-size:0.75rem;" type="button">
+                <i class="bi bi-bookmark-plus"></i> Save Schema as Template
+              </button>
+              <button id="btn-manage-templates" class="btn btn-sm btn-outline-secondary py-0 px-2" style="font-size:0.75rem;" type="button">
+                <i class="bi bi-gear"></i> Manage Templates
+              </button>
+            </div>
+          </div>
+          <div class="row g-2" id="builder-templates-container">
+            <!-- Dynamically populated from starter-templates.json -->
+          </div>
+        </div>
+
+        <!-- Drop Customer Sample File to Auto-Scaffold -->
+        <div class="glass-panel p-3 mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="fw-bold mb-0 text-dark small"><i class="bi bi-magic text-primary"></i> Auto-Generate Config from Customer File</h6>
+            <span class="small text-muted">Scaffold target schema & mappings in seconds</span>
+          </div>
+          <div id="builder-drop-zone" class="drop-zone-dashed p-3 text-center">
+            <i class="bi bi-cloud-arrow-up text-primary fs-3 d-block mb-1"></i>
+            <div class="fw-bold text-dark small">Drop customer sample CSV, TSV, or XLSX file here</div>
+            <small class="text-muted">Unravel parses headers, inspects sample data rows, and infers target columns, validation rules & layout translations automatically</small>
+            <input type="file" id="builder-file-input" accept=".csv,.tsv,.txt,.xlsx,.xls" class="d-none">
+          </div>
+        </div>
+
+        <!-- Section 1: Project Metadata & API Authentication -->
+        <div class="glass-panel p-3 mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="fw-bold mb-0 text-dark small"><i class="bi bi-file-earmark-text text-primary"></i> 1. Project & Customer Metadata</h6>
+            <span class="badge bg-light text-muted border">System Core</span>
+          </div>
+          <div class="row g-2 mb-2">
+            <div class="col-md-4">
+              <label class="form-label small fw-bold text-secondary mb-0">Project ID (Slug):</label>
+              <input type="text" id="meta-proj-id" class="form-control form-control-sm font-monospace" placeholder="customer-ingest-v1">
+            </div>
+            <div class="col-md-5">
+              <label class="form-label small fw-bold text-secondary mb-0">Project Display Name:</label>
+              <input type="text" id="meta-proj-name" class="form-control form-control-sm" placeholder="Customer Data Profile">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label small fw-bold text-secondary mb-0">Version (Semver):</label>
+              <input type="text" id="meta-proj-version" class="form-control form-control-sm font-monospace" placeholder="1.0.0">
+            </div>
+          </div>
+          <div class="row g-2 mb-2">
+            <div class="col-md-4">
+              <label class="form-label small fw-bold text-secondary mb-0">Author Username:</label>
+              <input type="text" id="meta-author-user" class="form-control form-control-sm" placeholder="consultant.name">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label small fw-bold text-secondary mb-0">Author Email:</label>
+              <input type="email" id="meta-author-email" class="form-control form-control-sm" placeholder="consultant@enterprise.org">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label small fw-bold text-secondary mb-0">API Destination URL:</label>
+              <input type="url" id="meta-dest-url" class="form-control form-control-sm font-monospace" placeholder="https://api.enterprise.io/v1/ingest/records">
+            </div>
+          </div>
+          <div class="row g-2">
+            <div class="col-md-6">
+              <label class="form-label small fw-bold text-secondary mb-0">Authorization Bearer Token:</label>
+              <div class="input-group input-group-sm">
+                <span class="input-group-text font-monospace small bg-light">Bearer</span>
+                <input type="text" id="meta-dest-token" class="form-control font-monospace" placeholder="{{TOKEN}} or custom token">
+              </div>
+              <small class="text-muted" style="font-size:0.72rem;">Embedded into <code>destination.headers["Authorization"]</code></small>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold text-secondary mb-0">Additional Custom Headers (JSON):</label>
+              <input type="text" id="meta-dest-headers" class="form-control form-control-sm font-monospace" placeholder='{"X-Provider-ID": "PRV-102"}'>
+              <small class="text-muted" style="font-size:0.72rem;">Merged with <code>destination.headers</code></small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: Target Columns Builder -->
+        <div class="glass-panel p-3 mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="d-flex align-items-center gap-2">
+              <h6 class="fw-bold mb-0 text-dark small"><i class="bi bi-layout-three-columns text-primary me-1"></i> Target Columns</h6>
+              <span id="target-cols-count-badge" class="badge bg-primary">0</span>
+            </div>
+            <button id="btn-add-target-col" class="btn btn-sm btn-outline-primary py-0 px-2" style="font-size:0.8rem;" onclick="builder.addNewTargetColumn()">
+              <i class="bi bi-plus-circle"></i> Add Column
+            </button>
+          </div>
+          <p class="text-muted small mb-2">Define destination fields, required status, default fallback values, validation rules, and transformation pipelines.</p>
+          <div id="builder-target-cols-container">
+            <!-- Dynamically populated via builder.js -->
+          </div>
+        </div>
+
+        <!-- Section 2B: Calculated Columns (Virtual Fields) -->
+        <div class="glass-panel p-3 mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="d-flex align-items-center gap-2">
+              <h6 class="fw-bold mb-0 text-dark small"><i class="bi bi-calculator text-primary"></i> 2b. Calculated Columns (Virtual Fields)</h6>
+              <span id="calc-cols-count-badge" class="badge bg-info text-white">0</span>
+            </div>
+            <button class="btn btn-sm btn-outline-info py-0 px-2" style="font-size:0.8rem;" onclick="builder.addNewCalculatedColumn()">
+              <i class="bi bi-plus-circle"></i> Add Formula Field
+            </button>
+          </div>
+          <p class="text-muted small mb-2">Derive virtual columns computed from formulas using <code>[column_id]</code> tokens (e.g. <code>[sale_qty] * [sale_unit_price]</code> or <code>([sale_qty] > 100) ? 'large' : 'small'</code>).</p>
+          <div id="builder-calc-cols-container">
+            <!-- Dynamically populated via builder.js -->
+          </div>
+        </div>
+
+        <!-- Section 2C: Ingestion Row Filters -->
+        <div class="glass-panel p-3 mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="d-flex align-items-center gap-2">
+              <h6 class="fw-bold mb-0 text-dark small"><i class="bi bi-funnel text-primary"></i> 2c. Ingestion Row Filters</h6>
+              <span id="row-filters-count-badge" class="badge bg-secondary text-white">0</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <div class="d-flex align-items-center gap-1">
+                <span class="small text-muted" style="font-size:0.75rem;">Combine:</span>
+                <select id="filter-combine-mode" class="form-select form-select-sm py-0" style="width: auto; font-size:0.75rem;" onchange="builder.updateFilterCombineMode(this.value)">
+                  <option value="AND">AND (All rules)</option>
+                  <option value="OR">OR (Any rule)</option>
+                </select>
+              </div>
+              <button class="btn btn-sm btn-outline-secondary py-0 px-2" style="font-size:0.8rem;" onclick="builder.addNewRowFilter()">
+                <i class="bi bi-plus-circle"></i> Add Row Filter
+              </button>
+            </div>
+          </div>
+          <p class="text-muted small mb-2">Filter out rows before entering validation (e.g. <code>[sale_value] &gt; 0</code> and <code>[sale_value] &lt;= 1000</code>). Excluded rows can be inspected and downloaded separately.</p>
+          <div id="builder-row-filters-container">
+            <!-- Dynamically populated via builder.js -->
+          </div>
+        </div>
+
+        <!-- Section 3: Provider Layout Profiles & Translations Matrix -->
+        <div class="glass-panel p-3 mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="fw-bold mb-0 text-dark small"><i class="bi bi-file-earmark-spreadsheet text-primary"></i> 3. Supplier Layout Profiles & Translations</h6>
+            <button id="btn-add-layout" class="btn btn-sm btn-outline-primary py-0 px-2" style="font-size:0.8rem;">
+              <i class="bi bi-plus-circle"></i> Add Provider Layout
+            </button>
+          </div>
+          <p class="text-muted small mb-2">Configure worksheet strategies, header offsets, column transformations, and date format translations per supplier layout.</p>
+
+          <!-- Layout Tabs -->
+          <ul class="nav nav-pills nav-fill mb-2" id="builder-layout-tabs">
+            <!-- Dynamically populated -->
+          </ul>
+
+          <!-- Layout Editor -->
+          <div id="builder-layout-editor">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN: LIVE JSON PREVIEW & DIAGNOSTICS (Sticky) -->
+      <div id="builder-json-column" class="col-lg-5 col-xl-4 p-3 d-flex flex-column" style="height: calc(100vh - 65px);">
+        <div class="glass-panel json-preview-card p-3">
+          <div class="d-flex justify-content-between align-items-center mb-2 flex-shrink-0">
+            <div class="d-flex align-items-center gap-2">
+              <i class="bi bi-filetype-json text-primary fs-5"></i>
+              <h6 class="fw-bold mb-0 text-dark small">Live JSON Preview</h6>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <span class="badge bg-success text-light border">Real-time</span>
+              <button class="btn btn-sm btn-outline-secondary py-0 px-1" title="Hide Preview" onclick="builder.toggleJsonPreview()">
+                <i class="bi bi-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Real-time Diagnostics Alert -->
+          <div id="builder-diagnostics" class="mb-2 flex-shrink-0">
+            <!-- Dynamically populated -->
+          </div>
+
+          <!-- Code Box -->
+          <div class="json-code-box" id="builder-json-code">
+            <!-- JSON text -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Column Validation Rules Modal -->
+  <div class="modal fade" id="modal-col-validations" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content glass-card shadow-lg border">
+        <div class="modal-header py-2 px-3 border-bottom">
+          <h6 class="modal-title fw-bold text-dark mb-0">
+            <i class="bi bi-shield-check text-primary me-2"></i><span id="val-modal-col-name">Column Validations</span>
+          </h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-3">
+          <p class="small text-muted mb-2">Select validation assertions to enforce on this field:</p>
+          <div class="d-flex flex-wrap gap-1 mb-3" id="val-modal-rules-list">
+            <!-- Dynamically populated -->
+          </div>
+
+          <!-- Min/Max numeric options -->
+          <div class="row g-2 mb-2 p-2 bg-light rounded border d-none" id="val-modal-range-box">
+            <div class="col-6">
+              <label class="small fw-bold text-dark mb-0">Minimum Value:</label>
+              <input type="number" id="val-modal-min" class="form-control form-control-sm" placeholder="e.g. 0">
+            </div>
+            <div class="col-6">
+              <label class="small fw-bold text-dark mb-0">Maximum Value:</label>
+              <input type="number" id="val-modal-max" class="form-control form-control-sm" placeholder="e.g. 1000">
+            </div>
+          </div>
+
+          <!-- Custom Regex Pattern Box -->
+          <div class="p-2 bg-light rounded border small d-none" id="val-modal-regex-box">
+            <div class="mb-2">
+              <label class="fw-bold mb-0 text-dark"><i class="bi bi-regex text-primary"></i> Custom Regex Pattern:</label>
+              <input type="text" id="val-modal-regex-pattern" class="form-control form-control-sm font-monospace" placeholder="e.g. ^[A-Z]{2}\d{4}$">
+            </div>
+            <div>
+              <label class="fw-bold mb-0 text-dark">Failure Error Message:</label>
+              <input type="text" id="val-modal-regex-msg" class="form-control form-control-sm" placeholder="e.g. Must start with 2 uppercase letters">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer py-2 px-3 border-top">
+          <button type="button" class="btn btn-sm btn-light" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-sm btn-primary" id="btn-save-val-modal">Save Validations</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Column Transformations & Type Casting Modal -->
+  <div class="modal fade" id="modal-col-transforms" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content glass-card shadow-lg border">
+        <div class="modal-header py-2 px-3 border-bottom">
+          <h6 class="modal-title fw-bold text-dark mb-0">
+            <i class="bi bi-magic text-info me-2"></i><span id="trans-modal-col-name">Transformations & Casting</span>
+          </h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-3">
+          <p class="small text-muted mb-2">Configure ordered data cleanup, type casting, and formatting steps:</p>
+          
+          <!-- Add Step Selector -->
+          <div class="d-flex gap-2 mb-3">
+            <select id="trans-modal-add-select" class="form-select form-select-sm">
+              <option value="">-- Add Transformation Step --</option>
+              <optgroup label="Type Casting">
+                <option value="cast_integer">Type Cast: Integer (Auto-rounds float, strips $)</option>
+                <option value="cast_float">Type Cast: Float / Decimal</option>
+                <option value="cast_string">Type Cast: String</option>
+                <option value="cast_boolean">Type Cast: Boolean (1/0, yes/no, true/false)</option>
+                <option value="cast_date">Type Cast: Date (ISO YYYY-MM-DD)</option>
+              </optgroup>
+              <optgroup label="Text Cleanup">
+                <option value="trim">Trim Whitespace</option>
+                <option value="uppercase">ALL UPPERCASE</option>
+                <option value="lowercase">all lowercase</option>
+                <option value="capitalize">Capitalize Words</option>
+                <option value="date_format">Date Format Translation</option>
+              </optgroup>
+            </select>
+            <button type="button" class="btn btn-sm btn-primary" id="btn-add-trans-step">
+              <i class="bi bi-plus-lg"></i> Add
+            </button>
+          </div>
+
+          <!-- Active Steps Pipeline -->
+          <div class="small fw-bold text-secondary mb-1">Active Pipeline (Executed in Order):</div>
+          <div id="trans-modal-pipeline-list" class="d-flex flex-column gap-2 mb-2">
+            <!-- Dynamically populated -->
+          </div>
+          <div id="trans-modal-empty-msg" class="text-muted small fst-italic text-center py-3">
+            No transformations configured. Raw values will be used.
+          </div>
+        </div>
+        <div class="modal-footer py-2 px-3 border-top">
+          <button type="button" class="btn btn-sm btn-light" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-sm btn-primary" id="btn-save-trans-modal">Save Transformations</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    </div>
+  </div>
+
+  <!-- Excel-Style Bottom Status Bar -->
+  <footer class="excel-statusbar mt-auto d-flex align-items-center justify-content-between px-3">
+    <span><i class="bi bi-tools text-primary"></i> Schema Builder Mode</span>
+    <span>Powered by <span id="app-footer-brand-name">Unravel</span> Engine</span>
+  </footer>
+
+  <!-- Local Offline Scripts -->
+  <script src="../assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+  <script src="../assets/vendor/sweetalert2/sweetalert2.all.min.js"></script>
+  <script src="../assets/vendor/xlsx/xlsx.full.min.js"></script>
+  <script src="../assets/vendor/papaparse/papaparse.min.js"></script>
+  <script src="../assets/vendor/dayjs/dayjs.min.js"></script>
+  <script src="../assets/vendor/dayjs/customParseFormat.js"></script>
+  <script>if (window.dayjs && window.dayjs_plugin_customParseFormat) dayjs.extend(window.dayjs_plugin_customParseFormat);</script>
+  <script src="../assets/js/validators.js"></script>
+  <script src="../assets/js/builder.js"></script>
+</body>
+</html>
